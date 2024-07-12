@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mfa.data.data.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,9 +24,15 @@ class ProductListViewModel @Inject constructor(
                     send(ProductListUIState(isLoading = false, products = it.products))
                 }
             }
-            .onFailure { exception->
-               launch(Dispatchers.IO) {
-                    trySend(ProductListUIState(isLoading = false, products = null, errorMessage = exception.message))
+            .onFailure { exception ->
+                launch(Dispatchers.IO) {
+                    trySend(
+                        ProductListUIState(
+                            isLoading = false,
+                            products = null,
+                            errorMessage = exception.message
+                        )
+                    )
                 }
             }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProductListUIState())

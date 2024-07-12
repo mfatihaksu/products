@@ -8,12 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.mfa.product.detail.ProductDetailRoute
 import com.mfa.product.list.ProductListRoute
 
 @Composable
 fun ProductsNavigation(modifier: Modifier, navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = "list"){
-        composable("list") {
+    NavHost(navController = navController, startDestination = "product/list"){
+        composable("product/list") {
             ProductListRoute(modifier = modifier, onClick = {
                 navController.navigate("product/detail/$it")
             })
@@ -22,7 +23,7 @@ fun ProductsNavigation(modifier: Modifier, navController: NavHostController = re
             "product/detail/{id}",
             listOf(navArgument("id") { type = NavType.StringType })
         ) {
-            //ProductDetailRoute()
+            ProductDetailRoute(modifier = modifier)
         }
     }
 }

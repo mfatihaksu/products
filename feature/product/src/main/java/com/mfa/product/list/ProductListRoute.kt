@@ -28,26 +28,26 @@ fun ProductListRoute(
     onClick: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    ProductListScreen(state = uiState, modifier = modifier) {
+    ProductListScreen(uiState = uiState, modifier = modifier) {
         onClick(it)
     }
 }
 
 @Composable
 internal fun ProductListScreen(
-    state: ProductListUIState,
+    uiState: ProductListUIState,
     modifier: Modifier,
     onClick: (String) -> Unit
 ) {
-    if (state.isLoading) {
+    if (uiState.isLoading) {
         Loading()
     } else {
-        if (state.errorMessage.isNullOrEmpty().not()){
-            AppAlertDialog(dialogTitle = "Error", dialogText = state.errorMessage.orEmpty(), onDismissRequest = {}, onConfirmation = {})
+        if (uiState.errorMessage.isNullOrEmpty().not()){
+            AppAlertDialog(dialogTitle = "Error", dialogText = uiState.errorMessage.orEmpty(), onDismissRequest = {}, onConfirmation = {})
         }else{
             ProductListContent(
                 modifier = modifier,
-                products = state.products.orEmpty(),
+                products = uiState.products.orEmpty(),
                 onClick = onClick
             )
         }
@@ -70,7 +70,7 @@ internal fun ProductListContent(
 @Composable
 internal fun ProductItemView(modifier: Modifier, product: Product, onClick: (String) -> Unit) {
     Column(modifier = modifier.clickable {
-        onClick(product.product_id.orEmpty())
+        onClick(product.id.orEmpty())
     }, horizontalAlignment = Alignment.CenterHorizontally) {
         AsyncImage(model = product.image, contentDescription = product.name)
         Spacer(modifier = Modifier.height(16.dp))

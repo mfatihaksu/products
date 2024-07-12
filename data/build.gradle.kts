@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
-    kotlin("plugin.serialization")
+    id("kotlinx-serialization")
 }
 android {
     compileSdk = 34
@@ -28,5 +28,5 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.kotlinx.serialization)
     implementation(libs.bundles.ktor)
-    implementation(libs.kotlinx.serialization.json.v160)
+    implementation(libs.kotlinx.serialization.core)
 }

@@ -25,7 +25,8 @@ navigationCompose = "2.7.7"
 kotlinVersion = "1.9.24"
 coil = "2.6.0"
 ktorVersion = "2.3.12"
-kotlinxSerialization = "1.5.1"
+kotlinxSerialization = "1.6.0"
+kotlinxSerializationCore = "1.6.3"
 serializationKotlin = "1.5.21"
 uiToolingPreviewAndroid = "1.6.8"
 uiTooling = "1.6.8"
@@ -54,20 +55,20 @@ kotlin-stb = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kot
 android-tools-build-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-kotlinx-serialization-json-v160 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktorVersion" }
-ktor-client-serialization = { group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktorVersion" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 # Ktor
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorVersion" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorVersion" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorVersion" }
+ktor-client-gson = { module = "io.ktor:ktor-client-gson", version.ref = "ktorVersion" }
+ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version.ref = "ktorVersion" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorVersion" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
 
@@ -92,7 +93,7 @@ dagger-hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hil
 [bundles]
 ktor = [
     "ktor-client-core", "ktor-client-okhttp", "ktor-client-logging",
-    "ktor-client-content-negotiation", "ktor-serialization-kotlinx-json"
+    "ktor-client-content-negotiation", "ktor-serialization-kotlinx-json","ktor-client-serialization","ktor-client-gson"
 ]
 hilt = [
     "androidx-hilt-navigation-compose", "hilt-gradle-plugin", "hilt-android"]
