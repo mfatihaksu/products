@@ -21,3 +21,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "products"
 include(":app")
+include(":build-logic")
+include(":core")
+include(":data")
+include(":test")
+include(":feature")
+include(":core:testing")
+include(":core:ui")
+include(":feature:product")
+include(":core:util")
