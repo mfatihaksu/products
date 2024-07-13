@@ -1,12 +1,14 @@
 package com.mfa.product.list
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,8 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.mfa.data.data.Product
 import com.mfa.core.ui.Loading
+import com.mfa.data.data.ProductListUIObject
 import com.mfa.ui.AppAlertDialog
 
 @Composable
@@ -57,18 +59,26 @@ internal fun ProductListScreen(
 @Composable
 internal fun ProductListContent(
     modifier: Modifier = Modifier,
-    products: List<Product>,
+    products: List<ProductListUIObject>,
     onClick: (String) -> Unit
 ) {
-    LazyColumn(modifier = modifier.fillMaxSize()) {
-        itemsIndexed(products) { _, item ->
-            ProductItemView(modifier = Modifier, product = item, onClick = onClick)
+    val gridState = rememberLazyStaggeredGridState()
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = modifier,
+        state = gridState,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalItemSpacing = 10.dp,
+        content = {
+            itemsIndexed(products) { _, item ->
+                ProductItemView(modifier = Modifier, product = item, onClick = onClick)
+            }
         }
-    }
+    )
 }
 
 @Composable
-internal fun ProductItemView(modifier: Modifier, product: Product, onClick: (String) -> Unit) {
+internal fun ProductItemView(modifier: Modifier, product: ProductListUIObject, onClick: (String) -> Unit) {
     Column(modifier = modifier.clickable {
         onClick(product.id.orEmpty())
     }, horizontalAlignment = Alignment.CenterHorizontally) {

@@ -29,4 +29,8 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.bundles.ktor)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    testImplementation(libs.androidx.room.testing)
 }

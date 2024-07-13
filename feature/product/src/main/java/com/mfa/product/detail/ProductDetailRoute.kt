@@ -3,6 +3,8 @@ package com.mfa.product.detail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,8 +23,8 @@ fun ProductDetailRoute(
     modifier: Modifier = Modifier,
     viewModel: ProductDetailViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    ProductDetailScreen(uiState, modifier)
+//    val uiState by viewModel.uiState.collectAsState()
+//    ProductDetailScreen(uiState, modifier)
 }
 
 @Composable
@@ -30,9 +32,13 @@ internal fun ProductDetailScreen(uiState: ProductDetailUIState, modifier: Modifi
     if (uiState.isLoading) {
         Loading()
     } else {
-        if (uiState.errorMessage.isNullOrEmpty().not()){
-            AppAlertDialog(dialogTitle = "Error", dialogText = uiState.errorMessage.orEmpty(), onDismissRequest = {}, onConfirmation = {})
-        }else{
+        if (uiState.errorMessage.isNullOrEmpty().not()) {
+            AppAlertDialog(
+                dialogTitle = "Error",
+                dialogText = uiState.errorMessage.orEmpty(),
+                onDismissRequest = {},
+                onConfirmation = {})
+        } else {
             uiState.product?.let {
                 ProductDetailContent(
                     modifier = modifier,
@@ -44,8 +50,11 @@ internal fun ProductDetailScreen(uiState: ProductDetailUIState, modifier: Modifi
 }
 
 @Composable
-internal fun ProductDetailContent(modifier: Modifier = Modifier, product : Product) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+internal fun ProductDetailContent(modifier: Modifier = Modifier, product: Product) {
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         AsyncImage(model = product.image, contentDescription = product.name)
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = product.name.orEmpty())
