@@ -12,6 +12,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 
 class ApiClient {
     private val client = HttpClient(OkHttp) {
@@ -22,27 +23,29 @@ class ApiClient {
         }
 
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                ignoreUnknownKeys = true
+            })
         }
     }
 
-    suspend fun getProducts(): ApiOperation<Products> {
+    suspend fun getProducts(): OperationResult<Products> {
         return safeApiCall {
             client.get("cart/list").body<Products>()
         }
     }
 
-    suspend fun getProductDetail(id: String): ApiOperation<Product> {
+    suspend fun getProductDetail(id: String): OperationResult<Product> {
         return safeApiCall {
             client.get("cart/${id}/detail").body<Product>()
         }
     }
 
-    private inline fun <T> safeApiCall(apiCall: () -> T): ApiOperation<T> {
+    private inline fun <T> safeApiCall(apiCall: () -> T): OperationResult<T> {
         return try {
-            ApiOperation.Success(data = apiCall())
+            OperationResult.Success(data = apiCall())
         } catch (e: Exception) {
-            ApiOperation.Failure(exception = e)
+            OperationResult.Failure(exception = e)
         }
     }
 }

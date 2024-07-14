@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mfa.core.ui.Loading
-import com.mfa.data.data.ProductListUIObject
+import com.mfa.data.data.Product
 import com.mfa.ui.AppAlertDialog
 
 @Composable
@@ -59,7 +59,7 @@ internal fun ProductListScreen(
 @Composable
 internal fun ProductListContent(
     modifier: Modifier = Modifier,
-    products: List<ProductListUIObject>,
+    products: List<Product>,
     onClick: (String) -> Unit
 ) {
     val gridState = rememberLazyStaggeredGridState()
@@ -78,7 +78,7 @@ internal fun ProductListContent(
 }
 
 @Composable
-internal fun ProductItemView(modifier: Modifier, product: ProductListUIObject, onClick: (String) -> Unit) {
+internal fun ProductItemView(modifier: Modifier, product: Product, onClick: (String) -> Unit) {
     Column(modifier = modifier.clickable {
         onClick(product.id.orEmpty())
     }, horizontalAlignment = Alignment.CenterHorizontally) {

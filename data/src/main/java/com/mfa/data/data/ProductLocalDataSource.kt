@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 class ProductLocalDataSource @Inject constructor(
     private val db: AppDatabase
 ) : IProductLocalDataSource {
-    override val products: Flow<List<ProductEntity>>
+    override val products: Flow<List<Product>>
         get() = flow {
             emit(getProducts())
         }.flowOn(Dispatchers.IO)
@@ -18,7 +18,7 @@ class ProductLocalDataSource @Inject constructor(
 
     override fun getProduct(id: String) = db.productDao().getProduct(id)
 
-    override fun insertProduct(product: ProductEntity) {
+    override fun insertProduct(product: Product) {
         db.productDao().insert(product)
     }
 
@@ -28,9 +28,9 @@ class ProductLocalDataSource @Inject constructor(
 }
 
 interface IProductLocalDataSource {
-    val products: Flow<List<ProductEntity>>
-    fun getProducts(): List<ProductEntity>
-    fun getProduct(id: String): Flow<ProductEntity>
-    fun insertProduct(product: ProductEntity)
+    val products: Flow<List<Product>>
+    fun getProducts(): List<Product>
+    fun getProduct(id: String): Flow<Product>
+    fun insertProduct(product: Product)
     fun updateProduct(id : String, description : String? = null)
 }

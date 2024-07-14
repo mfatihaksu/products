@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mfa.core.ui.Loading
-import com.mfa.data.data.ProductDetailUIObject
+import com.mfa.data.data.Product
 import com.mfa.ui.AppAlertDialog
 
 @Composable
@@ -50,7 +50,7 @@ internal fun ProductDetailScreen(uiState: ProductDetailUIState, modifier: Modifi
 }
 
 @Composable
-internal fun ProductDetailContent(modifier: Modifier = Modifier, product: ProductDetailUIObject) {
+internal fun ProductDetailContent(modifier: Modifier = Modifier, product: Product) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally

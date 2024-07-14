@@ -1,9 +1,6 @@
 package com.mfa.product.list
 
-import com.mfa.data.data.ProductListUIObject
+import com.mfa.data.data.Product
+import com.mfa.ui.BaseUIState
 
-data class ProductListUIState(
-    val isLoading: Boolean = true,
-    val products: List<ProductListUIObject>? = null,
-    val errorMessage: String? = null
-)
+data class ProductListUIState(var products: List<Product>? = null): BaseUIState()

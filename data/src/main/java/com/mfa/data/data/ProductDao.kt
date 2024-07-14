@@ -10,15 +10,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProductDao {
 
-    @Query("SELECT * FROM productentity")
-    fun getProducts(): List<ProductEntity>
+    @Query("SELECT * FROM products")
+    fun getProducts(): List<Product>
 
-    @Query("SELECT * FROM productentity where id=:id")
-    fun getProduct(id : String) : Flow<ProductEntity>
+    @Query("SELECT * FROM products where id=:id")
+    fun getProduct(id : String) : Flow<Product>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(product : ProductEntity)
+    fun insert(product : Product)
 
-    @Query("UPDATE productentity SET description=:description WHERE id=:id")
+    @Query("UPDATE products SET description=:description WHERE id=:id")
     fun updateProduct(id : String, description : String? = null)
 }

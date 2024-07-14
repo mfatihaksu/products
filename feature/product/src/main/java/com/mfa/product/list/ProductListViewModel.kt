@@ -6,6 +6,7 @@ import com.mfa.data.data.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
@@ -16,8 +17,15 @@ class ProductListViewModel @Inject constructor(
     productRepository: ProductRepository
 ) : ViewModel() {
     val uiState: StateFlow<ProductListUIState> = channelFlow {
-        productRepository.getProducts().collectLatest {
-            send(ProductListUIState(isLoading = false, products = it.toList()))
+        val uiState = ProductListUIState()
+        productRepository.getProducts().catch {
+            uiState.isLoading = false
+            uiState.errorMessage = it.message
+            send(uiState)
+        }.collectLatest {
+            uiState.isLoading = false
+            uiState.products = it.toList()
+            send(uiState)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProductListUIState())
 }
