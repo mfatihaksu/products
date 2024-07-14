@@ -32,6 +32,14 @@ fun Product.toProductListUIObject() = ProductListUIObject(
     image = this.image
 )
 
+fun Product.toProductDetailUIObject() = ProductDetailUIObject(
+    id = this.id,
+    name = this.name,
+    price = this.price,
+    image = this.image,
+    description = this.description
+)
+
 fun Product.toProductEntity() = ProductEntity(
     uId = Random.nextInt(),
     id = this.id,
@@ -73,9 +81,25 @@ fun ProductEntity.toProductListUIObject() = ProductListUIObject(
     image = this.image
 )
 
+fun ProductEntity.toProductDetailUIObject() = ProductDetailUIObject(
+    id = this.id,
+    name = this.name,
+    price = this.price,
+    image = this.image,
+    description = this.description
+)
+
 data class ProductListUIObject(
     val id : String? = null,
     val name : String? = null,
     val price : Int? = null,
     val image : String? = null
+)
+
+data class ProductDetailUIObject(
+    val id : String? = null,
+    val name : String? = null,
+    val price : Int? = null,
+    val image : String? = null,
+    val description: String? = null
 )

@@ -2,7 +2,7 @@ package com.mfa.data.data
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -37,8 +37,20 @@ class ProductRepository @Inject constructor(
         emit(mProducts)
     }
 
-    override suspend fun getProduct(id: String): Flow<Product> {
-        TODO("Not yet implemented")
+    override suspend fun getProduct(id: String) = channelFlow {
+        localDataSource.getProduct(id).collectLatest { productEntity: ProductEntity ->
+            if (productEntity.description.isNullOrEmpty().not()){
+                send(productEntity.toProductDetailUIObject())
+            }else{
+                remoteDataSource.getProduct(id).onSuccess { product: Product ->
+                    val entity = product.toProductEntity()
+                    updateProduct(id = entity.id.orEmpty(), description = entity.description)
+                    trySend(product.toProductDetailUIObject())
+                }.onFailure {
+
+                }
+            }
+        }
     }
 
     override fun insertProduct(product: Product) {
@@ -46,6 +58,12 @@ class ProductRepository @Inject constructor(
             localDataSource.insertProduct(
                 product.toProductEntity()
             )
+        }
+    }
+
+    override fun updateProduct(id: String, description: String?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            localDataSource.updateProduct(id, description)
         }
     }
 }

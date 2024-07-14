@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mfa.core.ui.Loading
-import com.mfa.data.data.Product
+import com.mfa.data.data.ProductDetailUIObject
 import com.mfa.ui.AppAlertDialog
 
 @Composable
@@ -23,8 +23,8 @@ fun ProductDetailRoute(
     modifier: Modifier = Modifier,
     viewModel: ProductDetailViewModel = hiltViewModel()
 ) {
-//    val uiState by viewModel.uiState.collectAsState()
-//    ProductDetailScreen(uiState, modifier)
+    val uiState by viewModel.uiState.collectAsState()
+    ProductDetailScreen(uiState, modifier)
 }
 
 @Composable
@@ -50,7 +50,7 @@ internal fun ProductDetailScreen(uiState: ProductDetailUIState, modifier: Modifi
 }
 
 @Composable
-internal fun ProductDetailContent(modifier: Modifier = Modifier, product: Product) {
+internal fun ProductDetailContent(modifier: Modifier = Modifier, product: ProductDetailUIObject) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
