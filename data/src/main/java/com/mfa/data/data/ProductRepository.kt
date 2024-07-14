@@ -1,9 +1,9 @@
 package com.mfa.data.data
 
+import com.mfa.data.helper.OperationResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
@@ -13,34 +13,49 @@ class ProductRepository @Inject constructor(
     private val localDataSource: ProductLocalDataSource,
     private val remoteDataSource: ProductRemoteDataSource
 ) : IProductRepository {
-    override suspend fun getProducts() : Flow<List<Product>> {
-        localDataSource.products.collectLatest { localProducts ->
-            if (localProducts.isEmpty()) {
-                remoteDataSource.products.collectLatest { remoteProducts ->
-                    if (remoteProducts.isNotEmpty()) {
-                        remoteProducts.forEach {
-                            insertProduct(it)
+    override suspend fun getProducts(): Flow<OperationResult<List<Product>>> {
+        localDataSource.productsOperation.collectLatest { localProducts ->
+            if (localProducts is OperationResult.Success) {
+                localProducts.data?.let { products: List<Product> ->
+                    if (products.isEmpty()) {
+                        remoteDataSource.productsOperation.collectLatest { remoteProductOperation ->
+                            if (remoteProductOperation is OperationResult.Success) {
+                                remoteProductOperation.data?.let { remoteProducts ->
+                                    if (remoteProducts.isNotEmpty()) {
+                                        remoteProducts.forEach {
+                                            insertProduct(it)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        return merge(localDataSource.products, remoteDataSource.products)
+        return merge(localDataSource.productsOperation, remoteDataSource.productsOperation)
     }
 
-    override suspend fun getProduct(id: String) = channelFlow {
-        localDataSource.getProduct(id).collectLatest { productEntity: Product ->
-            if (productEntity.description.isNullOrEmpty().not()){
-                send(productEntity)
-            }else{
-                remoteDataSource.getProduct(id).onSuccess { product: Product ->
-                    updateProduct(id = product.id.orEmpty(), description = product.description)
-                    trySend(product)
-                }.onFailure { exception ->
-                    exception.printStackTrace()
+    override suspend fun getProduct(id: String): Flow<OperationResult<Product>> {
+        localDataSource.getProduct(id).collectLatest { localOperation ->
+            if (localOperation is OperationResult.Success) {
+                localOperation.data?.let { localProduct ->
+                    if (localProduct.description.isNullOrEmpty().not()) {
+                        remoteDataSource.getProduct(id).collectLatest { remoteOperation ->
+                            if (remoteOperation is OperationResult.Success) {
+                                remoteOperation.data?.let { remoteProduct ->
+                                    updateProduct(
+                                        remoteProduct.id.orEmpty(),
+                                        remoteProduct.description
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+        return merge(localDataSource.getProduct(id), remoteDataSource.getProduct(id))
     }
 
     override fun insertProduct(product: Product) {

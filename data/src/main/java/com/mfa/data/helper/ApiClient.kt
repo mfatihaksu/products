@@ -12,6 +12,10 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.serialization.json.Json
 
 class ApiClient {
@@ -29,23 +33,21 @@ class ApiClient {
         }
     }
 
-    suspend fun getProducts(): OperationResult<Products> {
-        return safeApiCall {
-            client.get("cart/list").body<Products>()
+    fun getProducts(): Flow<OperationResult<List<Product>>> = flow {
+        emit(OperationResult.Loading())
+        try {
+            emit(OperationResult.Success(client.get("cart/list").body<Products>().products))
+        } catch (exception: Exception) {
+            emit(OperationResult.Failure(exception.message.orEmpty()))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    suspend fun getProductDetail(id: String): OperationResult<Product> {
-        return safeApiCall {
-            client.get("cart/${id}/detail").body<Product>()
+    fun getProductDetail(id: String): Flow<OperationResult<Product>> = flow {
+        emit(OperationResult.Loading())
+        try {
+            emit(OperationResult.Success(client.get("cart/${id}/detail").body<Product>()))
+        } catch (exception: Exception) {
+            emit(OperationResult.Failure(exception.message.orEmpty()))
         }
-    }
-
-    private inline fun <T> safeApiCall(apiCall: () -> T): OperationResult<T> {
-        return try {
-            OperationResult.Success(data = apiCall())
-        } catch (e: Exception) {
-            OperationResult.Failure(exception = e)
-        }
-    }
+    }.flowOn(Dispatchers.IO)
 }

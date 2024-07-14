@@ -29,38 +29,33 @@ fun ProductDetailRoute(
 
 @Composable
 internal fun ProductDetailScreen(uiState: ProductDetailUIState, modifier: Modifier = Modifier) {
-    if (uiState.isLoading) {
-        Loading()
-    } else {
-        if (uiState.errorMessage.isNullOrEmpty().not()) {
+    when (uiState) {
+        is ProductDetailUIState.Loading -> Loading()
+        is ProductDetailUIState.Success -> ProductDetailContent(
+            modifier = modifier,
+            product = uiState.product
+        )
+        is ProductDetailUIState.Failure ->
             AppAlertDialog(
                 dialogTitle = "Error",
-                dialogText = uiState.errorMessage.orEmpty(),
+                dialogText = uiState.message,
                 onDismissRequest = {},
                 onConfirmation = {})
-        } else {
-            uiState.product?.let {
-                ProductDetailContent(
-                    modifier = modifier,
-                    product = it
-                )
-            }
-        }
     }
 }
 
 @Composable
-internal fun ProductDetailContent(modifier: Modifier = Modifier, product: Product) {
+internal fun ProductDetailContent(modifier: Modifier = Modifier, product: Product?) {
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(model = product.image, contentDescription = product.name)
+        AsyncImage(model = product?.image, contentDescription = product?.name)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = product.name.orEmpty())
+        Text(text = product?.name.orEmpty())
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = product.price.toString())
+        Text(text = product?.price.toString())
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = product.description.toString())
+        Text(text = product?.description.toString())
     }
 }

@@ -41,18 +41,20 @@ internal fun ProductListScreen(
     modifier: Modifier,
     onClick: (String) -> Unit
 ) {
-    if (uiState.isLoading) {
-        Loading()
-    } else {
-        if (uiState.errorMessage.isNullOrEmpty().not()){
-            AppAlertDialog(dialogTitle = "Error", dialogText = uiState.errorMessage.orEmpty(), onDismissRequest = {}, onConfirmation = {})
-        }else{
-            ProductListContent(
-                modifier = modifier,
-                products = uiState.products.orEmpty(),
-                onClick = onClick
-            )
-        }
+    when (uiState) {
+        is ProductListUIState.Loading -> Loading()
+        is ProductListUIState.Success -> ProductListContent(
+            modifier = modifier,
+            products = uiState.products,
+            onClick = onClick
+        )
+
+        is ProductListUIState.Failure ->
+            AppAlertDialog(
+                dialogTitle = "Error",
+                dialogText = uiState.message,
+                onDismissRequest = {},
+                onConfirmation = {})
     }
 }
 

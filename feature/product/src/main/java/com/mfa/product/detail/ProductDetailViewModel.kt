@@ -3,11 +3,12 @@ package com.mfa.product.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mfa.data.data.Product
 import com.mfa.data.data.ProductRepository
+import com.mfa.data.helper.OperationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
@@ -22,17 +23,21 @@ class ProductDetailViewModel @Inject constructor(
     private val productId: String = checkNotNull(savedStateHandle["id"])
 
     val uiState: StateFlow<ProductDetailUIState> = channelFlow {
-        val uiState = ProductDetailUIState()
-        productRepository.getProduct(productId)
-            .catch {
-                uiState.isLoading = false
-                uiState.errorMessage = it.message
-                send(uiState)
+        productRepository.getProduct(id = productId)
+            .collectLatest { operationResult: OperationResult<Product> ->
+                when (operationResult) {
+                    is OperationResult.Loading -> {
+                        send(ProductDetailUIState.Loading)
+                    }
+
+                    is OperationResult.Success -> {
+                        send(ProductDetailUIState.Success(operationResult.data))
+                    }
+
+                    is OperationResult.Failure -> {
+                        send(ProductDetailUIState.Failure(operationResult.errorMessage.orEmpty()))
+                    }
+                }
             }
-            .collectLatest {
-                uiState.isLoading = false
-                uiState.product = it
-                send(uiState)
-            }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProductDetailUIState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProductDetailUIState.Loading)
 }

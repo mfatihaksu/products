@@ -2,11 +2,12 @@ package com.mfa.product.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mfa.data.data.Product
 import com.mfa.data.data.ProductRepository
+import com.mfa.data.helper.OperationResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
@@ -17,15 +18,21 @@ class ProductListViewModel @Inject constructor(
     productRepository: ProductRepository
 ) : ViewModel() {
     val uiState: StateFlow<ProductListUIState> = channelFlow {
-        val uiState = ProductListUIState()
-        productRepository.getProducts().catch {
-            uiState.isLoading = false
-            uiState.errorMessage = it.message
-            send(uiState)
-        }.collectLatest {
-            uiState.isLoading = false
-            uiState.products = it.toList()
-            send(uiState)
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProductListUIState())
+        productRepository.getProducts()
+            .collectLatest { operationResult: OperationResult<List<Product>> ->
+                when (operationResult) {
+                    is OperationResult.Loading -> {
+                        send(ProductListUIState.Loading)
+                    }
+                    is OperationResult.Success -> {
+
+                        send(ProductListUIState.Success(operationResult.data.orEmpty()))
+                    }
+                    is OperationResult.Failure -> {
+                        send(ProductListUIState.Failure(operationResult.errorMessage.orEmpty()))
+                    }
+                }
+            }
+
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ProductListUIState.Loading)
 }

@@ -4,31 +4,22 @@ import com.mfa.data.helper.ApiClient
 import com.mfa.data.helper.OperationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class ProductRemoteDataSource @Inject constructor(
     private val apiClient: ApiClient
 ) : IProductRemoteDataSource {
-    override val products: Flow<List<Product>>
-        get() = channelFlow {
-            getProducts().onSuccess {
-                trySend(it.products)
-            }
-        }.flowOn(Dispatchers.IO)
+    override val productsOperation: Flow<OperationResult<List<Product>>>
+        get() = getProducts().flowOn(Dispatchers.IO)
 
-    override suspend fun getProducts(): OperationResult<Products> {
-        return apiClient.getProducts()
-    }
+    override fun getProducts() = apiClient.getProducts()
 
-    override suspend fun getProduct(id: String): OperationResult<Product> {
-        return apiClient.getProductDetail(id)
-    }
+    override fun getProduct(id: String) = apiClient.getProductDetail(id)
 }
 
 interface IProductRemoteDataSource {
-    val products: Flow<List<Product>>
-    suspend fun getProducts(): OperationResult<Products>
-    suspend fun getProduct(id: String): OperationResult<Product>
+    val productsOperation: Flow<OperationResult<List<Product>>>
+    fun getProducts(): Flow<OperationResult<List<Product>>>
+    fun getProduct(id: String): Flow<OperationResult<Product>>
 }

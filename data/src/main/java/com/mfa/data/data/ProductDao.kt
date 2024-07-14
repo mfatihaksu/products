@@ -4,8 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
@@ -14,7 +12,7 @@ interface ProductDao {
     fun getProducts(): List<Product>
 
     @Query("SELECT * FROM products where id=:id")
-    fun getProduct(id : String) : Flow<Product>
+    fun getProduct(id : String) : Product
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(product : Product)
