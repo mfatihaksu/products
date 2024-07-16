@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.mfa.core.ui.Loading
 import com.mfa.data.data.Product
 import com.mfa.ui.AppAlertDialog
+import com.mfa.ui.Loading
 
 @Composable
 fun ProductDetailRoute(

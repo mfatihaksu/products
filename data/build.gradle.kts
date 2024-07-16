@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    //alias(libs.plugins.kotlin.android.ksp)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
@@ -25,6 +24,7 @@ dependencies {
     implementation(libs.kotlin.stb)
     implementation(libs.androidx.core.ktx)
     implementation(libs.bundles.hilt)
+    testImplementation(libs.junit.jupiter)
     kapt(libs.hilt.android.compiler)
     implementation(libs.kotlinx.serialization)
     implementation(libs.bundles.ktor)
@@ -33,4 +33,6 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
