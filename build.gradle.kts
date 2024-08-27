@@ -8,7 +8,6 @@ buildscript {
         classpath(libs.android.tools.build.gradle.plugin)
         classpath(libs.kotlin.gradle.plugin)
         classpath(libs.hilt.gradle.plugin)
-        classpath(libs.kotlin.gradle.plugin.v1521)
         classpath(libs.kotlin.serialization)
     }
 }
@@ -20,5 +19,4 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.dagger.hilt.plugin) apply false
-    //kotlin("plugin.serialization") version "1.9.0" apply false
 }

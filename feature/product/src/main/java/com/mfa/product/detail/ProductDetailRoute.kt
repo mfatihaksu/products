@@ -41,6 +41,7 @@ internal fun ProductDetailScreen(uiState: ProductDetailUIState, modifier: Modifi
                 dialogText = uiState.message,
                 onDismissRequest = {},
                 onConfirmation = {})
+        else -> Unit
     }
 }
 

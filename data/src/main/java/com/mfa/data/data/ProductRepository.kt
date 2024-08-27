@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -14,26 +15,32 @@ class ProductRepository @Inject constructor(
     private val remoteDataSource: ProductRemoteDataSource
 ) : IProductRepository {
     override suspend fun getProducts(): Flow<OperationResult<List<Product>>> {
-        localDataSource.productsOperation.collectLatest { localProducts ->
-            if (localProducts is OperationResult.Success) {
-                localProducts.data?.let { products: List<Product> ->
-                    if (products.isEmpty()) {
-                        remoteDataSource.productsOperation.collectLatest { remoteProductOperation ->
-                            if (remoteProductOperation is OperationResult.Success) {
-                                remoteProductOperation.data?.let { remoteProducts ->
-                                    if (remoteProducts.isNotEmpty()) {
-                                        remoteProducts.forEach {
-                                            insertProduct(it)
+        val productFlow = flow {
+            localDataSource.productsOperation.collectLatest { localProducts ->
+                if (localProducts is OperationResult.Success) {
+                    localProducts.data?.let { products: List<Product> ->
+                        if (products.isEmpty()) {
+                            remoteDataSource.productsOperation.collectLatest { remoteProductOperation ->
+                                if (remoteProductOperation is OperationResult.Success) {
+                                    remoteProductOperation.data?.let { remoteProducts ->
+                                        if (remoteProducts.isNotEmpty()) {
+                                            remoteProducts.forEach {
+                                                insertProduct(it)
+                                            }
                                         }
                                     }
                                 }
+                                emit(remoteProductOperation)
                             }
+                        }else{
+                            emit(localProducts)
                         }
                     }
                 }
             }
         }
-        return merge(localDataSource.productsOperation, remoteDataSource.productsOperation)
+        return productFlow
+        //return merge(localDataSource.productsOperation, remoteDataSource.productsOperation)
     }
 
     override suspend fun getProduct(id: String): Flow<OperationResult<Product>> {
